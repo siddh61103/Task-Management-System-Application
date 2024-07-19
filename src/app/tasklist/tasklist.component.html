@@ -1,0 +1,105 @@
+<div class="container">
+  <h1>Task Manager Application</h1>
+  <hr />
+
+  <form id="submitform" (ngSubmit)="onSubmit(taskForm)" #taskForm="ngForm">
+    <!-- Existing form fields -->
+    <div class="form-group">
+      <input
+        type="text"
+        class="form-control"
+        id="task"
+        placeholder="Enter Task"
+        ngModel
+        name="task"
+        required
+      />
+      <small *ngIf="taskForm.invalid && taskForm.dirty" id="errorMessage" class="small-text">Required Field</small>
+    </div>
+    <div class="form-group">
+      <input
+        type="date"
+        class="form-control"
+        id="date"
+        placeholder="Enter Due Date"
+        ngModel
+        name="date"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <input
+        type="text"
+        class="form-control"
+        id="description"
+        placeholder="Enter Description"
+        ngModel
+        name="description"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <label for="priority">Choose the Priority:</label>
+      <select id="priority" class="form-control" ngModel name="priority">
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+      </select>
+    </div>
+
+    <button [disabled]="taskForm.invalid" id="submitButton" type="submit" class="btn btn-primary">Submit</button>
+    <button id="exportButton" type="button" class="btn btn-success" (click)="exportToCSV()">Export to CSV</button>
+  </form>
+  <hr />
+
+  <div class="form-group">
+    <label for="sortOptions">Sort By:</label>
+    <select id="sortOptions" class="form-control" [(ngModel)]="sortOption" (ngModelChange)="sortTasks()">
+      <option value="date">Due Date</option>
+      <option value="priority">Priority</option>
+      <option value="status">Status</option>
+    </select>
+  </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Task</th>
+        <th scope="col">Description</th>
+        <th scope="col">Due Date</th>
+        <th scope="col">Priority</th>
+        <th scope="col">Complete</th>
+        <th scope="col">Delete</th>
+        <th scope="col">Edit</th>
+        <th scope="col">Save</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let t of taskArray; index as i">
+        <td>
+          <input #taskinput
+          [ngClass]="{'edit':t.isEditable, 'not-edit':!t.isEditable ,'crossed':t.isCompleted}"
+          type="text"
+          class="form-control"
+          id="taskInTable"
+          value="{{ t.taskname }}"
+          [readonly]="!t.isEditable">
+        </td>
+        <td>{{ t.description }}</td>
+        <td>{{ t.dueDate }}</td>
+        <td>{{ t.priority }}</td>
+        <td>
+          <input
+            (change)="onCheck(i)"
+            id="mycheckbox"
+            type="checkbox"
+            aria-label="Checkbox for following text input"
+          />
+        </td>
+        <td><button id="delete" type="button" class="btn btn-danger" (click)="onDelete(i)">Delete</button></td>
+        <td><button id="edit" type="button" class="btn btn-primary" (click)="onEdit(i)" [disabled]="t.isEditable">Edit</button></td>
+        <td><button id="save" class="btn btn-warning" (click)="onSave(i, taskinput.value)" [disabled]="!t.isEditable">Save</button></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
